@@ -1,0 +1,4 @@
+__pycache__/
+*.pyc
+receiving_addresses.txt
+spawned.json
