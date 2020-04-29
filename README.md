@@ -5,7 +5,7 @@ It leverages the Wasabi's [RPC interface](https://docs.wasabiwallet.io/using-was
 
 The **core** of Spawn is the automatic creation of a new wallet, called `spawned`, which goal
 is to keep the mixing history totally segregated from the user wallets.
-They are conceived to be short lived and to be renewed often.
+Spawned wallets are conceived to be short lived and to be renewed often.
 
 Spawn allows to mix with Wasabi barely touching the GUI (potentially never),
 offers a simple command line interface to follow the daemon mixing and
