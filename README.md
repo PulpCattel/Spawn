@@ -44,7 +44,7 @@ experience with neither of them.
 * [Requests](https://requests.readthedocs.io/en/master/) and [Pexpect](https://pexpect.readthedocs.io/en/stable/) modules. (If you are using Tails, both packages
 are already installed)
 
-* (Optional) If you want to see the ConJoin info, such as number of peers registered,
+* (Optional) If you want to see the CoinJoin info, such as number of peers registered,
 denomination, timeout, exc... you need Tor installed. This is because the
 request to the backend API is done through Tor to the Onion Service.
 
@@ -103,4 +103,3 @@ Sometimes you'll have to do this to manage the [change](https://docs.wasabiwalle
 Please read carefully the documentation about change!
 
 Enjoy!
-
