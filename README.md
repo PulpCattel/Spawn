@@ -5,11 +5,14 @@ It leverages the Wasabi's [RPC interface](https://docs.wasabiwallet.io/using-was
 
 The **core** of Spawn is the automatic creation of a new wallet, called `spawned`, which goal
 is to keep the mixing history totally segregated from the user wallets.
+They are conceived to be short lived and to be renewed often.
 
-Spawn allows to mix with Wasabi barely touching the GUI (potentially never)
-and offers a simple command line interface to follow the daemon mixing.
+Spawn allows to mix with Wasabi barely touching the GUI (potentially never),
+offers a simple command line interface to follow the daemon mixing and
+uses the daemon's only feature of directly mixing into destination.
 
-Spawn should work without any difference on both Testnet and Mainnet (change it in the Wasabi's `config.json` file)
+Spawn should work without any difference on both Testnet and Mainnet (change it
+either in the Wasabi's `config.json` file or through the GUI)
 and should work with either deb package, tar.gz. or source code.
 
 If you backup your funds (**always do backup!**), losing funds should be virtually impossible,
@@ -19,6 +22,8 @@ Spawn is ready for testing, at the current stage it has been tested quite
 extensively on Testnet.
 Always try it out on Testnet first and, if you cannot read the code yourself,
 ask someone you trust to verify it before using it with real funds!
+
+Use at your own risk!
 
 Feedbacks and PRs are welcome.
 
@@ -32,7 +37,7 @@ Feedbacks and PRs are welcome.
 Should be possibile to make it work on Windows or Mac but I have no
 experience with neither of them.
 
-* Wasabi 1.1.11+
+* [Wasabi](https://wasabiwallet.io/) 1.1.11+
 
 * Python 3.7+ (should be already installed with Linux)
 
@@ -75,13 +80,13 @@ generated addresses. If you need more addresses you should try to use another sp
 * `destination` (Mandatory): This sets the destination wallet for the Wasabi mixing.
 The funds will be send to this destination wallet during the CoinJoin, without need
 to manually send them. The destination wallet has to be in the `Wallets` folder in the
-Wasabi data folder. Name has to be provided without the `.json` extension.
+Wasabi data folder. The destination has to be provided without the `.json` extension.
 
 ## Usage
 
 * Clone or download the repository
 * Open the Spawn repository
-* Type `python3 spawn.py`
+* Open a terminal and type `python3 spawn.py`
 * Follow the instruction
 
 The first time you launch Spawn it will copy a `placeholder.json` wallet file
@@ -89,5 +94,13 @@ in your wallet folder. That's it, a placeholder, its only goal is to allow
 Spawn to launch the daemon the first time. It should never holds any funds(!) and
 can be safely removed.
 
+To generate a new spawned wallet, remove the current `spawned.json` file
+from the `Wallets` folder or rename it.
+
 At any time you can stop using Spawn and manually use the spawned.json wallet
 through the Wasabi's GUI or daemon.
+Sometimes you'll have to do this to manage the [change](https://docs.wasabiwallet.io/using-wasabi/ChangeCoins.html#change-coins).
+Please read carefully the documentation about change!
+
+Enjoy!
+
