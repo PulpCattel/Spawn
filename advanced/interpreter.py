@@ -2,19 +2,19 @@
 try:
     from pexpect import TIMEOUT, EOF
     from pexpect.popen_spawn import PopenSpawn
-except(ModuleNotFoundError):
+except ModuleNotFoundError:
     raise ModuleNotFoundError('Pexpect module is missing but required')
 try:
     from requests import post
     from requests.exceptions import ConnectionError
-except(ModuleNotFoundError):
+except ModuleNotFoundError:
     raise ModuleNotFoundError('Requests module is missing but required')
 try:
     import advanced.my_exceptions as MyExceptions
-except(ModuleNotFoundError):
+except ModuleNotFoundError:
     try:
         import my_exceptions as MyExceptions
-    except(ModuleNotFoundError):
+    except ModuleNotFoundError:
         raise ModuleNotFoundError(
             'advanced/my_exceptions.py is missing, check the files are ' +
             'in place or download the repository again\n'

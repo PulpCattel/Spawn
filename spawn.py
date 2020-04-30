@@ -1,14 +1,14 @@
 # IMPORT
 try:
     from settings import settings
-except(ModuleNotFoundError):
+except ModuleNotFoundError:
     raise ModuleNotFoundError(
           'settings.py is missing, check the files are ' +
           'in place or download the repository again\n'
             )
 try:
     import advanced.handler
-except(ModuleNotFoundError):
+except ModuleNotFoundError:
     raise ModuleNotFoundError(
           'advanced/handler.py is missing, check the files are ' +
           'in place or download the repository again\n'

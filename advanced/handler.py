@@ -1,20 +1,20 @@
 ## IMPORTS
 try:
     import advanced.interpreter
-except(ModuleNotFoundError):
+except ModuleNotFoundError:
     try:
         import interpreter
-    except(ModuleNotFoundError):
+    except ModuleNotFoundError:
         raise ModuleNotFoundError(
             'advanced/interpreter.py is missing, check the files are ' +
             'in place or download the repository again\n'
                 )
 try:
     import advanced.my_exceptions as MyExceptions
-except(ModuleNotFoundError):
+except ModuleNotFoundError:
     try:
         import my_exceptions
-    except(ModuleNotFoundError):
+    except ModuleNotFoundError:
         raise ModuleNotFoundError(
               'advanced/my_exceptions.py is missing, check the files are ' +
               'in place or download the repository again\n'
@@ -57,7 +57,7 @@ class Handler():
         self.check_settings()
         try:
             with open(self.wasabi_path+'Config.json') as config:
-                lines = config.readlines()
+                config_file = config.read()
         except FileNotFoundError:
             raise FileNotFoundError(
                     '"Config.json" file is missing, if this ' +
@@ -66,18 +66,16 @@ class Handler():
                     'to be done just once as long as ".walletwasabi" ' +
                     'folder is not removed'
                             )
-        for line in lines:
-            if '"JsonRpcServerEnabled": true' in line:
-                rpc_enabled = True
-                break
-            elif '"JsonRpcServerEnabled": false' in line:
-                rpc_enabled = False
-                break
-        if not rpc_enabled:
+        if '"JsonRpcServerEnabled": false' in config_file:
             raise MyExceptions.RpcDisabled(
                 'RPC server is not enabled, turn it on ' +
                 'changing "JsonRpcServerEnabled" to true in the ' +
                 'Wasabi config.json file'
+                    )
+        elif '"JsonRpcServerEnabled"' not in config_file:
+            raise MyExceptions.RpcDisabled(
+                'RPC configuration is missing from the "config.json" ' +
+                'file, are you using Wasabi version 1.1.11+?'
                     )
         # If spawned wallet already there we can skip all the wallet
         # and password creation
