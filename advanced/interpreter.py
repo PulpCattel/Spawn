@@ -1,6 +1,6 @@
 # IMPORT
 try:
-    from pexpect import TIMEOUT, EOF
+    from pexpect import TIMEOUT, EOF, run
     from pexpect.popen_spawn import PopenSpawn
 except ModuleNotFoundError:
     raise ModuleNotFoundError('Pexpect module is missing but required')
@@ -22,6 +22,7 @@ except ModuleNotFoundError:
 from time import sleep
 from shutil import copy
 from os import listdir
+from signal import SIGTERM
 
 # PEXPECT COMMAND
 mix_commands = {
@@ -74,16 +75,15 @@ def evaluate_response(response):
         else:
             raise MyExceptions.RpcError(error['message'])
 
-def is_wasabi_running(rpc_user, rpc_pwd):
+def is_wasabi_running():
     """
-    Get status request to check if Wasabi is running.
+    Look for Wasabi process id.
     """
-    try:
-        get_wasabi_status(rpc_user, rpc_pwd)
-    except ConnectionError:
-        return False
-    else:
+    wasabi_process_id = run('pidof wassabee')
+    if wasabi_process_id:
         return True
+    else:
+        return False
 
 def launch_wasabi(rpc_user, rpc_pwd, path, pwd='',
                   name='placeholder', destination='', launch_path = ''):
@@ -163,15 +163,10 @@ def launch_wasabi(rpc_user, rpc_pwd, path, pwd='',
         raise MyExceptions.ProcessTimeout('Wasabi process TIMEOUT')
     if index == 2:
         raise EOFError('Pexpect EOF')
-    try:
-        success = is_wasabi_running(rpc_user, rpc_pwd)
-    except ConnectionError as e:
-        raise ConnectionError(str(e) + '\nYou may want to check if ' +
-                    'the wassabee process is still running and kill ' +
-                    'it manually'
-                        )
-    if success:
+    if is_wasabi_running():
         print('Wasabi started')
+    else:
+        raise MyException.FailedLaunch('Wasabi has not started, try again')
     return wasabi_proc
 
 def generate_wallet(rpc_user, rpc_pwd, pwd, name='spawned'):
@@ -242,6 +237,8 @@ def stop_wasabi(rpc_user, rpc_pwd, wasabi_proc):
                                       EOF,
                                       ], timeout=None)
     if index == 0:
+        wasabi_proc.kill(SIGTERM)
+        wasabi_proc.wait()
         print('Stopped')
         return
     elif index == 1:

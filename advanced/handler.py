@@ -83,8 +83,7 @@ class Handler():
             self.status = 'mixing'
         else:
             self.status = 'first_run'
-        if advanced.interpreter.is_wasabi_running(self.RpcUser,
-                                                  self.RpcPassword):
+        if advanced.interpreter.is_wasabi_running():
             raise MyExceptions.AlreadyRunning(
                         'Wasabi is currently running, shut it down ' +
                         'and launch spawn.py again'
@@ -206,8 +205,7 @@ class Handler():
         Launch wasabi, generate wallet and select it.
         """
         self.clear()
-        if advanced.interpreter.is_wasabi_running(self.RpcUser,
-                                                  self.RpcPassword):
+        if advanced.interpreter.is_wasabi_running():
             raise MyExceptions.AlreadyRunning(
                         'Wasabi is currently running, shut it down ' +
                         'and launch spawn.py again'
@@ -290,8 +288,7 @@ class Handler():
 
     def close_wasabi(self):
         """
-        Shutdown Wasabi daemon so can be started again with spawned
-        wallet.
+        Shutdown Wasabi daemon.
         """
         advanced.interpreter.stop_wasabi(self.RpcUser,
                                          self.RpcPassword,
@@ -332,8 +329,7 @@ class Handler():
         self.clear()
         # Wasabi should never be running at this point
         # but better safe than sorry
-        if advanced.interpreter.is_wasabi_running(self.RpcUser,
-                                                  self.RpcPassword):
+        if advanced.interpreter.is_wasabi_running():
             raise MyExceptions.AlreadyRunning(
                         'Wasabi is currently running, shut it down ' +
                         'and launch spawn.py again'

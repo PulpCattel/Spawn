@@ -51,3 +51,9 @@ class WrongSelection(MyException):
     Raised when the wrong wallet is selected
     """
     pass
+
+class FailedLaunch(MyException):
+    """
+    Raised when Wasabi doesn't start
+    """
+    pass
