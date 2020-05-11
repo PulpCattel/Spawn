@@ -85,8 +85,8 @@ def is_wasabi_running():
     else:
         return False
 
-def launch_wasabi(rpc_user, rpc_pwd, path, pwd='',
-                  name='placeholder', destination='', launch_path = ''):
+def launch_wasabi(path, pwd='', name='placeholder',
+                  destination='', launch_path = ''):
     """
     Launch Wasabi deamon and return pexpect child.
     """

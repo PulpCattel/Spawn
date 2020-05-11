@@ -211,8 +211,6 @@ class Handler():
                         'and launch spawn.py again'
                         )
         self.wassabee = advanced.interpreter.launch_wasabi(
-                                    self.RpcUser,
-                                    self.RpcPassword,
                                     self.wasabi_path,
                                     launch_path = self.launch_path,
                                            )
@@ -335,8 +333,6 @@ class Handler():
                         'and launch spawn.py again'
                         )
         self.wassabee = advanced.interpreter.launch_wasabi(
-                                           self.RpcUser,
-                                           self.RpcPassword,
                                            self.wasabi_path,
                                            self.pwd,
                                            'spawned',
@@ -344,6 +340,7 @@ class Handler():
                                            self.launch_path,
                                            )
         self.choose_wallet()
+        del self.pwd
         return
 
     def print_ui(self):
