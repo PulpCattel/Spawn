@@ -27,7 +27,11 @@ if handler.status == 'first_run':
     else:
         handler.user_password()
     handler.create_wallet()
+    if handler.watch_only:
+        handler.create_watch_only(getcwd())
     handler.create_addresses()
+    if handler.auto_backup:
+        handler.make_backup(getcwd())
     handler.stamp_addresses(getcwd())
     handler.close_wasabi()
 elif handler.status == 'mixing':

@@ -12,13 +12,10 @@ except ModuleNotFoundError:
 try:
     import advanced.my_exceptions as MyExceptions
 except ModuleNotFoundError:
-    try:
-        import my_exceptions as MyExceptions
-    except ModuleNotFoundError:
-        raise ModuleNotFoundError(
-            'advanced/my_exceptions.py is missing, check the files are ' +
-            'in place or download the repository again\n'
-                )
+    raise ModuleNotFoundError(
+        'advanced/my_exceptions.py is missing, check the files are ' +
+        'in place or download the repository again\n'
+            )
 from time import sleep
 from shutil import copy
 from os import listdir

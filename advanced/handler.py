@@ -2,21 +2,22 @@
 try:
     import advanced.interpreter
 except ModuleNotFoundError:
-    try:
-        import interpreter
-    except ModuleNotFoundError:
-        raise ModuleNotFoundError(
-            'advanced/interpreter.py is missing, check the files are ' +
-            'in place or download the repository again\n'
-                )
+    raise ModuleNotFoundError(
+        'advanced/interpreter.py is missing, check the files are ' +
+        'in place or download the repository again\n'
+            )
 try:
     import advanced.my_exceptions as MyExceptions
 except ModuleNotFoundError:
-    try:
-        import my_exceptions
-    except ModuleNotFoundError:
-        raise ModuleNotFoundError(
-              'advanced/my_exceptions.py is missing, check the files are ' +
+    raise ModuleNotFoundError(
+          'advanced/my_exceptions.py is missing, check the files are ' +
+          'in place or download the repository again\n'
+            )
+try:
+    import advanced.watch_only
+except ModuleNotFoundError:
+    raise ModuleNotFoundError(
+              'advanced/watch_only.py is missing, check the files are ' +
               'in place or download the repository again\n'
                 )
 from requests import get
@@ -44,6 +45,7 @@ class Handler():
             self.launch_path = settings['launch_path']
             self.auto_generate = settings['auto_generate']
             self.auto_backup = settings['auto_backup']
+            self.watch_only = settings['watch_only']
             self.RpcUser = settings['JsonRpcUser']
             self.RpcPassword = settings['JsonRpcPassword']
             self.observer = settings['observer']
@@ -105,6 +107,8 @@ class Handler():
             raise TypeError('"auto_generate" setting has to be True or False')
         if type(self.auto_backup) is not bool:
             raise TypeError('"auto_backup" setting has to be True or False')
+        if type(self.watch_only) is not bool:
+            raise TypeError('"watch_only" setting has to be True or False')
         if type(self.RpcUser) is not str:
             raise TypeError('"JsonRpcUser" setting has to be a string')
         if type(self.RpcPassword) is not str:
@@ -226,6 +230,27 @@ class Handler():
         self.choose_wallet()
         return
 
+    def create_watch_only(self, path):
+        """
+        Create Bitcoin Core watch-only to import with import multi.
+        The command is saved in the core_watch_only.txt file
+        """
+        wallet_info = advanced.interpreter.get_wallet_info(
+                                             self.RpcUser,
+                                             self.RpcPassword,
+                                            )
+        command = advanced.watch_only.build_command(
+                                wallet_info['extendedAccountPublicKey'],
+                                wallet_info['masterKeyFingerprint'],
+                                    )
+        with open(path+'/user_data/core_watch_only.txt', 'w') as core_file:
+            core_file.write('Use this command to import your wallet as ' +
+                            'watch-only in Bitcoin Core. Look at the ' +
+                            'README.md file for more info'
+                            )
+            core_file.write('\n\n' + command)
+        return
+
     def choose_wallet(self):
         """
         Select a wallet.
@@ -249,8 +274,6 @@ class Handler():
                                                     self.observer
                                                     ))
             print(self.addresses[-1]['address'])
-        if self.auto_backup:
-            self.make_backup()
         try:
             input('\nThese are your receiving addresses, you can ' +
                   'deposit to any of them and mixing will start ' +
@@ -263,13 +286,13 @@ class Handler():
             pass
         return
 
-    def make_backup(self, name='spawned'):
+    def make_backup(self, path, name='spawned'):
         """
         Copy the name.json wallet file into the Spawn folder.
         """
         wallet_name = name + '.json'
         path_from = self.wasabi_path+'Wallets/{}'.format(wallet_name)
-        copy(path_from, wallet_name)
+        copy(path_from, path+'/user_data/'+wallet_name)
         return
 
     def stamp_addresses(self, path):
@@ -277,7 +300,7 @@ class Handler():
         Dump addresses list in receiving_addresses.txt alongside
         key path and public key.
         """
-        with open(path+'/receiving_addresses.txt', 'w') as addresses_file:
+        with open(path+'/user_data/receiving_addresses.txt', 'w') as addresses_file:
             for address in self.addresses:
                 addresses_file.write(address['address'])
                 addresses_file.write('\n\t'+address['keyPath']+'\n')
@@ -426,7 +449,7 @@ class Handler():
         Then add '(USED)' in front of the used addresses and remove them
         from UI.
         """
-        if 'receiving_addresses.txt' not in listdir(getcwd()):
+        if 'receiving_addresses.txt' not in listdir(getcwd()+'/user_data'):
             return ('"receiving_addresses.txt" is missing, unable to ' +
                     'show unused addresses'
                     )
@@ -441,7 +464,7 @@ class Handler():
                                                     )
         utxo_addresses = [utxo['address'] for utxo in wallet_utxos]
 
-        with open(getcwd()+'/receiving_addresses.txt') as addresses_file:
+        with open(getcwd()+'/user_data/receiving_addresses.txt') as addresses_file:
             lines = addresses_file.readlines()
         for line in lines:
             if line.strip()[:3] == 'tb1' or line.strip()[:3] == 'bc1':
@@ -452,7 +475,7 @@ class Handler():
                     unused_addresses.append(line.strip())
             counter += 1
         if is_changed:
-            with open(getcwd()+'/receiving_addresses.txt',
+            with open(getcwd()+'/user_data/receiving_addresses.txt',
                                                 'w') as addresses_file:
                 for line in lines:
                     addresses_file.write(line)

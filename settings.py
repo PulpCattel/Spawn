@@ -2,6 +2,7 @@ settings = {
             'launch_path': '',
             'auto_generate': False,
             'auto_backup': False,
+            'watch_only': False,
             'JsonRpcUser': '',
             'JsonRpcPassword': '',
             'observer': '',

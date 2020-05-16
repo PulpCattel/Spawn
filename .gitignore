@@ -1,4 +1,5 @@
 __pycache__/
 *.pyc
 receiving_addresses.txt
+core_watch_only.txt
 spawned.json
