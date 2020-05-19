@@ -21,15 +21,6 @@ from shutil import copy
 from os import listdir
 from signal import SIGTERM
 
-# PEXPECT COMMAND
-mix_commands = {
-        'deb0': 'wassabee mix --wallet:{} --keepalive',
-        'deb1': 'wassabee mix --wallet:{} --destination:{} --keepalive',
-        'source0': 'dotnet run --mix --wallet:{} --keepalive',
-        'source1': 'dotnet run --mix --wallet:{} --destination:{} --keepalive',
-        'targz0': './wassabee mix --wallet:{} --keepalive',
-        'targz1': './wassabee mix --wallet:{} --destination:{} --keepalive',
-            }
 ## RPC documentation link:
 ## https://docs.wasabiwallet.io/using-wasabi/RPC.html#wasabi-remote-procedure-call-interface
 
@@ -82,38 +73,35 @@ def is_wasabi_running():
     else:
         return False
 
-def launch_wasabi(path, pwd='', name='placeholder',
-                  destination='', launch_path = ''):
+def launch_wasabi(wallet, launch_path='', destination='',
+                  keepalive=True, pwd=''):
     """
-    Launch Wasabi deamon and return pexpect child.
+    Launch Wasabi daemon.
+    Return pexpect child if successful or return False if Wasabi didn't
+    started.
+    Wasabi daemon's documentation:
+    https://docs.wasabiwallet.io/using-wasabi/Daemon.html#headless-wasabi-daemon
     """
+    command = ''
     # If no launch_path provided, assume deb package is installed.
     if not launch_path:
-        if name == 'placeholder':
-            command = mix_commands['deb0'].format(name)
-            if 'placeholder.json' not in listdir(path+'Wallets'):
-                copy('advanced/placeholder.json', path+'Wallets')
-        elif name == 'spawned':
-            command = mix_commands['deb1'].format(name, destination)
+        command += 'wassabee mix'
+
+    # If launch_path is provided, if WalletWasabi.Gui in it,
+    # assume source code.
+    elif 'WalletWasabi.Gui' in launch_path:
+        command += 'dotnet run --mix'
+
+    # If launch_path is provided, if WalletWasabi.Gui not in it,
+    # assume targz.
     else:
-        # If launch_path is provided, if WalletWasabi.Gui in it,
-        # assume source code.
-        if 'WalletWasabi.Gui' in launch_path:
-            if name == 'placeholder':
-                command = mix_commands['source0'].format(name)
-                if 'placeholder.json' not in listdir(path+'Wallets'):
-                    copy('advanced/placeholder.json', path+'Wallets')
-            elif name == 'spawned':
-                command = mix_commands['source1'].format(name, destination)
-        # If launch_path is provided, if WalletWasabi.Gui not in it,
-        # assume targz.
-        else:
-            if name == 'placeholder':
-                command = mix_commands['targz0'].format(name)
-                if 'placeholder.json' not in listdir(path+'Wallets'):
-                    copy('advanced/placeholder.json', path+'Wallets')
-            elif name == 'spawned':
-                command = mix_commands['targz1'].format(name, destination)
+        command += './wassabee mix'
+    command += ' --wallet:{}'.format(wallet)
+
+    if destination:
+        command += ' --destination:{}'.format(destination)
+    if keepalive:
+        command += ' --keepalive'
     print('Starting Wasabi')
     if launch_path:
         try:
@@ -144,11 +132,13 @@ def launch_wasabi(path, pwd='', name='placeholder',
                                       ], timeout=30)
     if index == 0:
         print('Wasabi daemon started')
-    if index == 1:
+    elif index == 1:
+        wasabi_proc.kill(SIGTERM)
+        wasabi_proc.wait()
         raise MyExceptions.WrongPassword('Wrong password')
-    if index == 2:
+    elif index == 2:
         raise MyExceptions.ProcessTimeout('Wasabi process TIMEOUT')
-    if index == 3:
+    elif index == 3:
         raise EOFError('Pexpect EOF')
     index = wasabi_proc.expect_exact(['Starting Wallet',
                                       TIMEOUT,
@@ -156,15 +146,15 @@ def launch_wasabi(path, pwd='', name='placeholder',
                                       ], timeout=30)
     if index == 0:
         print('Wallet starting')
-    if index == 1:
+    elif index == 1:
         raise MyExceptions.ProcessTimeout('Wasabi process TIMEOUT')
-    if index == 2:
+    elif index == 2:
         raise EOFError('Pexpect EOF')
     if is_wasabi_running():
         print('Wasabi started')
+        return wasabi_proc
     else:
-        raise MyException.FailedLaunch('Wasabi has not started, try again')
-    return wasabi_proc
+        return False
 
 def generate_wallet(rpc_user, rpc_pwd, pwd, name='spawned'):
     """

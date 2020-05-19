@@ -214,10 +214,17 @@ class Handler():
                         'Wasabi is currently running, shut it down ' +
                         'and launch spawn.py again'
                         )
+        wallets_path = self.wasabi_path+'Wallets'
+
+        ## Copies the placeholder.json wallet file into the Wasabi's wallets
+        ## folder, needed to start the daemon the first time.
+        if 'placeholder.json' not in listdir(wallets_path):
+            copy('advanced/placeholder.json', wallets_path)
+
         self.wassabee = advanced.interpreter.launch_wasabi(
-                                    self.wasabi_path,
-                                    launch_path = self.launch_path,
-                                           )
+                                        'placeholder', self.launch_path)
+        if not self.wassabee:
+            raise MyException.FailedLaunch('Wasabi has not started')
         wallet = advanced.interpreter.generate_wallet(self.RpcUser,
                                                       self.RpcPassword,
                                                       self.pwd)
@@ -227,7 +234,7 @@ class Handler():
               'spawned.json wallet file'
               '\nBackup either the words list or the wallet file!'
               )
-        self.choose_wallet()
+        advanced.interpreter.select_wallet(self.RpcUser, self.RpcPassword)
         return
 
     def create_watch_only(self, path):
@@ -249,15 +256,6 @@ class Handler():
                             'README.md file for more info'
                             )
             core_file.write('\n\n' + command)
-        return
-
-    def choose_wallet(self):
-        """
-        Select a wallet.
-        """
-        advanced.interpreter.select_wallet(self.RpcUser,
-                                           self.RpcPassword
-                                            )
         return
 
     def create_addresses(self):
@@ -355,14 +353,11 @@ class Handler():
                         'Wasabi is currently running, shut it down ' +
                         'and launch spawn.py again'
                         )
-        self.wassabee = advanced.interpreter.launch_wasabi(
-                                           self.wasabi_path,
-                                           self.pwd,
-                                           'spawned',
-                                           self.destination,
-                                           self.launch_path,
-                                           )
-        self.choose_wallet()
+        self.wassabee = advanced.interpreter.launch_wasabi('spawned',
+                        self.launch_path, self.destination, pwd=self.pwd)
+        if not self.wassabee:
+            raise MyException.FailedLaunch('Wasabi has not started')
+        advanced.interpreter.select_wallet(self.RpcUser, self.RpcPassword)
         del self.pwd
         return
 
