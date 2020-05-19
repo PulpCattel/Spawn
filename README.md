@@ -59,7 +59,11 @@ in the `config.json` file, you can find it in the [Wasabi data folder](https://d
 The script is ready to use, you only need to configure the settings in
 the `settings.py` file and provide a destination wallet.
 
-* `launch_path` (Optional): Leaving it to empty will launch Wasabi through `wassabee` command,
+*Optional* means they can be left at default.  
+*To check* means they could be left at default depending on your configuration.  
+*Mandatory* means they require your input.
+
+* `launch_path` (**To check**): Leaving it to empty will launch Wasabi through `wassabee` command,
 this works with deb package installed. If you are running source code or a
 tar.gz. extracted somewhere, specify here the path where you would launch Wasabi.
 * `auto_generate` (Optional): If `False`, the default, you'll have to provide your own
@@ -82,7 +86,7 @@ in your wallet file.
 * `JsonRpcUser` and `JsonRpcPassword` (Optional): If you set these two in your `config.json`
 file in the Wasabi data folder, you have to set them here too, otherwise you'll
 receive a `WrongCredentials` error.
-* `observer` (Mandatory): This set the [observer](https://docs.wasabiwallet.io/using-wasabi/Receive.html#observers)
+* `observer` (**Mandatory**): This set the [observer](https://docs.wasabiwallet.io/using-wasabi/Receive.html#observers)
 name of the generated addresses.
 Each spawned wallet should have a unique observer, use different spawned wallets
 for different observers.
@@ -92,7 +96,7 @@ Note that you can deposit to any address of the spawned wallet, but they
 won't be tracked in the `receiving_addresses.txt` file.
 So, if you don't use the automatically generated addresses, you'll have
 to keep track of them (to avoid address reuse) by yourself.
-* `destination` (Mandatory): This sets the destination wallet for the Wasabi mixing.
+* `destination` (**Mandatory**): This sets the destination wallet for the Wasabi mixing.
 The funds will be send to this destination wallet during the CoinJoin, without need
 to manually send them. The destination wallet has to be in the `Wallets` folder in the
 Wasabi data folder. The destination has to be provided without the `.json` extension.
