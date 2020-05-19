@@ -83,7 +83,7 @@ This is the only script, at the moment, that can also be launched indipendently.
 Go in `advanced` and launch with `python3 watch_only.py`. It will ask
 for an `xpub` and a `fingerprint`. In the case of Wasabi you can find those
 in your wallet file.
-* `JsonRpcUser` and `JsonRpcPassword` (Optional): If you set these two in your `config.json`
+* `JsonRpcUser` and `JsonRpcPassword` (**To check**): If you set these two in your `config.json`
 file in the Wasabi data folder, you have to set them here too, otherwise you'll
 receive a `WrongCredentials` error.
 * `observer` (**Mandatory**): This set the [observer](https://docs.wasabiwallet.io/using-wasabi/Receive.html#observers)
